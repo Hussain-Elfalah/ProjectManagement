@@ -1,0 +1,58 @@
+ <!-- Include the sidebar -->
+ <%- include('partials/sidebar') %>
+
+ <div class="dashboard">
+    <% let maleTotal = 0; %>
+    <% let femaleTotal = 0; %>
+    <% let projectClosed = 0; %>
+
+    <% data.forEach(project => { %>
+        <% maleTotal += parseInt(project.male_participants); %>
+        <% femaleTotal += parseInt(project.female_participants); %>
+        <% projectClosed += parseInt(project.num_project_closures); %>
+    <% }) %>
+
+    <div class="card male-participation">
+       <div id="spanCardMale"><span class="material-symbols-sharp">man_2</span></div> 
+        <h2>Male Participation</h2>
+        <p>Number of male participants:</p>
+        <p><%= maleTotal %></p>
+    </div>
+    <div class="card female-participation">
+        <div id="spanCardFemale"><span class="material-symbols-sharp">woman_2</span></div>
+        <h2>Female Participation</h2>
+        <p>Number of female participants: </p>
+        <p><%= femaleTotal %></p>
+    </div>
+    <div class="card total-closed-projects">
+        <div id="spanCardProject"><span class="material-symbols-sharp">task_alt</span></div>
+        <h2>Total Closed Projects</h2>
+        <p>Total number of closed projects:</p>
+        <p><%= projectClosed %></p>
+    </div>
+
+    <div class="table">
+        <table id="project-table">
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Activity Forms</th>
+                    <th>Activity Closure</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% data.forEach(project => { %>
+                    <tr>
+                        <td><%= project.project_name %></td>
+                        <td><%= project.num_activity_forms %></td>
+                        <td><%= project.num_activity_closures %></td>
+                        <td><a href="#">Report</a></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+ <!-- Include the footer -->
+    <%- include('partials/footer') %>

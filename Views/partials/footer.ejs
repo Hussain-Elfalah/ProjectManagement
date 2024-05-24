@@ -1,0 +1,46 @@
+<script>
+// Add event listeners to "Add" buttons
+const addButtons = document.querySelectorAll(".add-field");
+addButtons.forEach(button => {
+    button.addEventListener("click", event => {
+        const sectionId = event.target.dataset.section;
+        addInputField(sectionId);
+    });
+});
+
+// Function to add a new input field
+function addInputField(sectionId) {
+    const section = document.getElementById(sectionId);
+    const inputs = section.querySelectorAll("input");
+    const lastInput = inputs[inputs.length - 1];
+    const newInput = lastInput.cloneNode(true);
+    const index = parseInt(newInput.id.slice(-1)) + 1;
+    newInput.id = `${sectionId.slice(0, -1)}${index}`;
+    newInput.value = "";
+    section.insertBefore(newInput, lastInput.nextSibling);
+
+    // Add "x" button if there are 2 or more input fields
+    if (inputs.length >= 2) {
+        addDeleteButton(section, newInput);
+    }
+}
+
+// Function to add delete button
+function addDeleteButton(section, inputField) {
+    // Check if "x" button already exists before adding
+    if (!section.querySelector(".delete-field")) {
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.classList.add("delete-field");
+        deleteButton.textContent = "x";
+        deleteButton.addEventListener("click", () => {
+            section.removeChild(inputField);
+            section.removeChild(deleteButton);
+        });
+        section.appendChild(deleteButton);
+    }
+}
+
+</script>
+</body>
+</html>

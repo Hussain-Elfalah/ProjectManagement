@@ -1,0 +1,48 @@
+<!-- Include the sidebar -->
+<%- include('partials/Usidebar') %>
+<form class="form-container" action="/charter" method="post">
+
+    <label for="project_id" class="form-label">Project:</label>
+    <select id="project_id" name="project_id" class="form-select" required>
+        <option value="">Select Project</option>
+        <% projects.forEach(project => { %>
+            <option value="<%= project.id %>"><%= project.project_name %></option>
+        <% }); %>
+    </select>
+
+    <label for="start_date" class="form-label">Start Date:</label>
+    <input type="date" id="start_date" name="start_date" class="form-input" required>
+
+    <label for="end_date" class="form-label">End Date:</label>
+    <input type="date" id="end_date" name="end_date" class="form-input" required>
+
+    <label for="description" class="form-label">Description:</label>
+    <textarea id="description" name="description" class="form-textarea" rows="4" cols="50"></textarea>
+
+    <div id="kpis">
+        <label for="kpi1">KPIs:</label>
+        <input type="text" id="kpi1" name="kpis[]" required>
+        <button type="button" class="add-field" data-section="kpis">+</button>
+    </div>
+    
+    <div id="risks">
+        <label for="risk1">Risks:</label>
+        <input type="text" id="risk1" name="risks[]" required>
+        <button type="button" class="add-field" data-section="risks">+</button>
+    </div>
+    
+    <div id="mitigation_strategies">
+        <label for="mitigation_strategy1">Mitigation Strategies:</label>
+        <input type="text" id="mitigation_strategy1" name="mitigation_strategies[]" required>
+        <button type="button" class="add-field" data-section="mitigation_strategies">+</button>
+    </div>
+    
+
+    <label for="target_participants" class="form-label">Target Participants:</label>
+    <input type="number" id="target_participants" name="target_participants" class="form-input" required><br><br>
+
+    <button type="submit" class="form-button">Create Charter</button>
+</form>
+
+<!-- Include the footer -->
+<%- include('partials/footer') %>    

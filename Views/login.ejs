@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Managment Platform</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 320px;
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .container h2 {
+    margin-bottom: 20px;
+    color: #333333;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  #login-button {
+    background-color: #DA1E37;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  #login-button:hover {
+    background-color: #cc0000;
+  }
+
+  #error-message {
+    margin-top: 20px;
+    color: #ff7782;
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      width: 90%;
+    }
+  }
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <img src="/images/Mask group.png" alt="">
+    <h2>Project Managment</h2>
+    <form action="/login" method="post">
+      <input type="text" id="username" class="input-field" name="username" placeholder="Username" required>
+      <input type="password" id="password" class="input-field" name="password" placeholder="Password" required>
+      <input type="submit" id="login-button" value="Login">
+       <!-- Error Message -->
+       <% if (locals.error) { %>
+        <div id="error-message">
+            <%= error %>
+        </div>
+    <% } %>
+    </form>    
+  </div>
+</body>
+</html>
