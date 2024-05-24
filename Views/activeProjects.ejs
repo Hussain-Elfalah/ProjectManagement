@@ -1,0 +1,35 @@
+   <!-- Include the sidebar -->
+   <%- include('partials/sidebar') %>
+        <div id="pending-container">
+        <h1 id="pending-heading">Active Projects</h1>
+        <!-- Table of Pending Projects -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Submitter</th>
+                    <th>Created at</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through pending projects data and populate the table -->
+                <% activeProjects.forEach(function(project) { %>
+                <tr>
+                    <td><%= project.project_name %></td>
+                    <td><%= project.submitter_name %></td>
+                    <td><%= project.submission_timestamp %></td>
+                    <td>
+                        <!-- Add action buttons for the admin to approve or reject projects -->
+                        <form method="post" action="#">
+                            <button type="submit">See More</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+  <!-- Include the footer -->
+  <%- include('partials/footer') %>
+

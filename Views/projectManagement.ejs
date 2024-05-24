@@ -1,0 +1,82 @@
+<!-- Include the sidebar -->
+<%- include('partials/sidebar') %>
+
+<div class="container">
+    <!-- Heading -->
+    <h1><%= heading %></h1>
+
+    <!-- Error Message -->
+    <% if (locals.error) { %>
+        <div class="error-message">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <!-- Success Message -->
+    <% if (locals.success) { %>
+        <div class="success-message">
+            <%= success %>
+        </div>
+    <% } %>
+
+    <!-- Table of Projects -->
+    <table>
+        <thead>
+            <tr>
+                <th>Project Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% locals.projects.forEach(function(project) { %>
+                <tr>
+                    <td><%= project.project_name %></td>
+                    <td><%= project.status %></td>
+                    <td>
+                        <!-- Edit Form -->
+                        <form id="editProjectForm_<%= project.id %>" style="display: none;" method="post" action="/projects/<%= project.id %>/edit">
+                            <input type="text" name="project_name" value="<%= project.project_name %>" required>
+                            <select name="status" required>
+                                <option value="Pending" <%= project.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="Ongoing" <%= project.status === 'ongoing' ? 'selected' : '' %>>Active</option>
+                                <option value="Completed" <%= project.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                            </select>
+                            <button type="submit">Save</button>
+                        </form>
+                        <button onclick="toggleEditProjectForm('<%= project.id %>')">Edit</button>
+
+                        <!-- Delete Form -->
+                        <form id="deleteProjectForm_<%= project.id %>" method="post" action="/projects/<%= project.id %>/delete" onsubmit="return confirm('Are you sure you want to delete this project?');">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Add New Project Form -->
+    <h2>Add New Project</h2>
+    <form id="addProjectForm" method="post" action="/projects/add">
+        <input type="text" name="project_name" placeholder="Project Name" required>
+        <select name="status" required>
+            <option value="">Select Status</option>
+            <option value="pending">Pending</option>
+            <option value="ongoing">Active</option>
+            <option value="completed">Completed</option>
+        </select>
+        <button type="submit">Add Project</button>
+    </form>
+
+</div>
+
+<script>
+    function toggleEditProjectForm(projectId) {
+        const editForm = document.getElementById(`editProjectForm_${projectId}`);
+        editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+<!-- Include the footer -->
+<%- include('partials/footer') %>
