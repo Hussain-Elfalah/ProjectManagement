@@ -210,7 +210,7 @@ async function addUser(req, res) {
     try {
         const { username, password, permissions_id, roles_id} = req.body;
         await axios.post(`${API_URL}/users/add`, { username, password, permissions_id, roles_id });
-        res.redirect("/");
+        res.redirect(200, "/users");
     } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).render("newUser.ejs", { heading: "User Management", error: "Failed to add user." });
@@ -280,22 +280,32 @@ async function editProject(req, res) {
     }
 }
 
-// Deleting functions
+// Deleting function
 async function deleteUser(req, res) {
     try {
         const userId = req.params;
         const projectId = req.body;
-        const projectIds = projectId.project_id.split(',');
-        projectIds.forEach(async (projectId) => {
-            await axios.delete(`${API_URL}/project/members/remove/${projectId}/${userId.id}`);
-        });
+
+        // Check if projectId.project_id is defined and not empty
+        if (projectId.project_id) {
+            const projectIds = projectId.project_id.split(',');
+            for (const projectId of projectIds) {
+                // Ensure the projectId is valid before making the request
+                if (projectId) {
+                    await axios.delete(`${API_URL}/project/members/remove/${projectId}/${userId.id}`);
+                }
+            }
+        }
+
+        // Proceed to delete the user regardless of project assignments
         await axios.delete(`${API_URL}/users/${userId.id}/delete`);
         res.redirect("/users");
     } catch (error) {
         console.error('Error deleting user:', error);
-        res.redirect(500, "/users", { heading: "User Management", error: "Failed to delete user." });
+        res.status(500).redirect("/users", { heading: "User Management", error: "Failed to delete user." });
     }
 }
+
 
 async function deleteProject(req, res) {
     try {
@@ -344,15 +354,23 @@ app.post("/login", (req, res, next) => {
         // Redirect user back to login page with a custom error message
         return res.redirect("/login?error=Incorrect username or password");
       }
-      // Authentication successful, redirect to dashboard
+      // Authentication successful
       req.logIn(user, (err) => {
         if (err) {
           // Handle error
           console.log(err);
           return res.redirect("/login");
         }
-        console.log("logged in")
-        return res.redirect("/dashboard");
+        console.log("logged in");
+        // Check user role ID and redirect accordingly
+        if (user.role_id === 1) {
+          return res.redirect("/dashboard");
+        } else if (user.role_id === 2 || user.role_id === 3) {
+          return res.redirect("/index");
+        } else {
+          // Default case, just in case
+          return res.redirect("/login");
+        }
       });
     })(req, res, next);
   });
