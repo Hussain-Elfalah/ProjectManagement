@@ -325,10 +325,11 @@ app.delete('/project/members/remove/:project_id/:user_id', async (req, res) => {
 // --------------------------------------- Charter ---------------------------------------------------
 // Create a new charter
 app.post('/charters/add', async (req, res) => {
-  const { start_date, end_date, projects_id, project_description, kpis, risks, mitigation_strategies, target_participants, submitter_id } = req.body;
-  const query = 'INSERT INTO charter (start_date, end_date, projects_id, description, kpis, risks, mitigation_strategies, target_participants, submitter_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-  const values = [start_date, end_date, projects_id, project_description, kpis, risks, mitigation_strategies, target_participants, submitter_id];
+  const { start_date, end_date, project_id, description, kpis, risks, mitigation_strategies, target_participants, submitter_name } = req.body;
+  const query = 'INSERT INTO charter (start_date, end_date, project_id, description, kpis, risks, mitigation_strategies, target_participants, submitter_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+  const values = [start_date, end_date, project_id, description, kpis, risks, mitigation_strategies, target_participants, submitter_name];
   try {
+    console.log(start_date, end_date, project_id, description, kpis, risks, mitigation_strategies, target_participants, submitter_name);
       const result = await db.query(query, values);
       res.json(result.rows[0]);
   } catch (err) {
@@ -348,11 +349,11 @@ app.post('/charters/add', async (req, res) => {
     }
   });
 
-  // Get specific charter charters
+  // Get specific charter 
   app.get('/charters/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const result = await db.query('SELECT * FROM charter where id = $1', [id]);
+      const result = await db.query('SELECT * FROM charter where project_id = $1', [id]);
       res.json(result.rows);
     } catch (err) {
       console.error('Error executing query', err);
@@ -717,3 +718,4 @@ app.post('/project_closures/add', async (req, res) => {
 app.listen(port, () => {
     console.log(`Backend Running on http://localhost:${port}`)
 })
+

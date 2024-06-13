@@ -1,48 +1,195 @@
-<!-- Include the sidebar -->
-<%- include('partials/Usidebar') %>
-<form class="form-container" action="/charter" method="post">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-page Project Charter Form</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-page {
+            display: none;
+        }
+        .form-label {
+            display: block;
+            margin-top: 1em;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.5em;
+            margin-top: 0.5em;
+            box-sizing: border-box;
+        }
+        .form-button {
+            margin-top: 1em;
+            padding: 0.5em 1em;
+            cursor: pointer;
+        }
+        .delete-field {
+            margin-left: 0.5em;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 0.2em 0.5em;
+            cursor: pointer;
+        }
+        .delete-field:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include the sidebar -->
+    <%- include('partials/Usidebar') %>
 
-    <label for="project_id" class="form-label">Project:</label>
-    <select id="project_id" name="project_id" class="form-select" required>
-        <option value="">Select Project</option>
-        <% projects.forEach(project => { %>
-            <option value="<%= project.id %>"><%= project.project_name %></option>
-        <% }); %>
-    </select>
-
-    <label for="start_date" class="form-label">Start Date:</label>
-    <input type="date" id="start_date" name="start_date" class="form-input" required>
-
-    <label for="end_date" class="form-label">End Date:</label>
-    <input type="date" id="end_date" name="end_date" class="form-input" required>
-
-    <label for="description" class="form-label">Description:</label>
-    <textarea id="description" name="description" class="form-textarea" rows="4" cols="50"></textarea>
-
-    <div id="kpis">
-        <label for="kpi1">KPIs:</label>
-        <input type="text" id="kpi1" name="kpis[]" required>
-        <button type="button" class="add-field" data-section="kpis">+</button>
+    <div class="form-container">
+        <% if (username) { %>
+            <h2>User: <%= username %></h2>
+            <label for="projectSelect_<%= username %>" class="form-label">Select Project:</label>
+                <select id="projectSelect_<%= username %>" onchange="generateCharterForm(this.value, '<%= username %>')">
+                    <option value="">Select Project</option>
+                    <% 
+                        // Find the user object for the current username
+                        const user = projects.find(user => user.username === username);
+                        if (user) {
+                            user.project_ids.forEach((projectId, index) => { 
+                    %>
+                        <option value="<%= projectId %>"><%= user.project_names[index] %></option>
+                    <% 
+                            });
+                        }
+                    %>
+                </select>
+                <div id="charterFormContainer_<%= username %>"></div>
+                <% } else { %>
+                    <p>No projects found for the logged-in user.</p>
+                <% } %>       
     </div>
     
-    <div id="risks">
-        <label for="risk1">Risks:</label>
-        <input type="text" id="risk1" name="risks[]" required>
-        <button type="button" class="add-field" data-section="risks">+</button>
-    </div>
-    
-    <div id="mitigation_strategies">
-        <label for="mitigation_strategy1">Mitigation Strategies:</label>
-        <input type="text" id="mitigation_strategy1" name="mitigation_strategies[]" required>
-        <button type="button" class="add-field" data-section="mitigation_strategies">+</button>
-    </div>
-    
 
-    <label for="target_participants" class="form-label">Target Participants:</label>
-    <input type="number" id="target_participants" name="target_participants" class="form-input" required><br><br>
+    <script>
+        function generateCharterForm(projectId, userId) {
+            console.log('generateCharterForm called with:', { projectId, userId });
+    if (projectId) {
+        console.log('generateCharterForm called with:', { projectId, userId });
+    if (projectId) {
+        var charterFormContainer = document.getElementById('charterFormContainer_' + userId);
+        charterFormContainer.innerHTML = `
+            <form action="/charters/${projectId}" method="get">
+                <button type="submit" class="form-button">Submit</button>
+                 <input type="hidden" name="project_id" value="${projectId}">
+                <input type="hidden" name="submitter_name" value="${userId}">
+                <div class="form-page" id="page1-${projectId}">
+                    <h3>Page 1: Project Information</h3>
+                    <label for="start_date_${projectId}" class="form-label">Start Date:</label>
+                    <input type="date" id="start_date_${projectId}" name="start_date" class="form-input">
+                    <label for="end_date_${projectId}" class="form-label">End Date:</label>
+                    <input type="date" id="end_date_${projectId}" name="end_date" class="form-input">
+                    <button type="button" class="form-button" onclick="nextPage('${projectId}', 1)">Next</button>
+                </div>
+                <div class="form-page" id="page2-${projectId}" style="display: none;">
+                    <h3>Page 2: Project Details</h3>
+                    <label for="description_${projectId}" class="form-label">Description:</label>
+                    <textarea id="description_${projectId}" name="description" class="form-textarea" rows="4" cols="50"></textarea>
+                    <button type="button" class="form-button" onclick="prevPage('${projectId}', 2)">Previous</button>
+                    <button type="button" class="form-button" onclick="nextPage('${projectId}', 2)">Next</button>
+                </div>
+                <div class="form-page" id="page3-${projectId}" style="display: none;">
+                    <h3>Page 3: KPIs, Risks, and Mitigation Strategies</h3>
+                    <div id="kpis_${projectId}">
+                        <label for="kpi1_${projectId}">KPIs:</label>
+                        <input type="text" id="kpi1_${projectId}" name="kpis[]">
+                        <button type="button" class="add-field" data-section="kpis_${projectId}" onclick="addField('kpis_${projectId}')">+</button>
+                    </div>
+                    <div id="risks_${projectId}">
+                        <label for="risk1_${projectId}">Risks:</label>
+                        <input type="text" id="risk1_${projectId}" name="risks[]">
+                        <button type="button" class="add-field" data-section="risks_${projectId}" onclick="addField('risks_${projectId}')">+</button>
+                    </div>
+                    <div id="mitigation_strategies_${projectId}">
+                        <label for="mitigation_strategy1_${projectId}">Mitigation Strategies:</label>
+                        <input type="text" id="mitigation_strategy1_${projectId}" name="mitigation_strategies[]">
+                    </div>
+                    <button type="button" class="form-button" onclick="prevPage('${projectId}', 3)">Previous</button>
+                    <button type="button" class="form-button" onclick="nextPage('${projectId}', 3)">Next</button>
+                </div>
+                <div class="form-page" id="page4-${projectId}" style="display: none;">
+                    <h3>Page 4: Target Participants</h3>
+                    <label for="target_participants_${projectId}" class="form-label">Target Participants:</label>
+                    <input type="number" id="target_participants_${projectId}" name="target_participants" class="form-input">
+                    <button type="button" class="form-button" onclick="prevPage('${projectId}', 4)">Previous</button>
+                    <button type="submit" class="form-button">Submit</button>
+                </div>
+            </form>
+            <form id="projectCharterForm_${projectId}" class="project-form" action="/charters/add" method="post">
+                <input type="hidden" name="project_id" value="${projectId}">
+                <input type="hidden" name="submitter_name" value="${userId}">
+                <div class="form-page" id="page1-${projectId}">
+                    <h3>Page 1: Project Information</h3>
+                    <label for="start_date_${projectId}" class="form-label">Start Date:</label>
+                    <input type="date" id="start_date_${projectId}" name="start_date" class="form-input">
+                    <label for="end_date_${projectId}" class="form-label">End Date:</label>
+                    <input type="date" id="end_date_${projectId}" name="end_date" class="form-input">
+                    <button type="button" class="form-button" onclick="nextPage('${projectId}', 1)">Next</button>
+                </div>
+                <div class="form-page" id="page2-${projectId}" style="display: none;">
+                    <h3>Page 2: Project Details</h3>
+                    <label for="description_${projectId}" class="form-label">Description:</label>
+                    <textarea id="description_${projectId}" name="description" class="form-textarea" rows="4" cols="50"></textarea>
+                    <button type="button" class="form-button" onclick="prevPage('${projectId}', 2)">Previous</button>
+                    <button type="button" class="form-button" onclick="nextPage('${projectId}', 2)">Next</button>
+                </div>
+                <div class="form-page" id="page3-${projectId}" style="display: none;">
+                    <h3>Page 3: KPIs, Risks, and Mitigation Strategies</h3>
+                    <div id="kpis_${projectId}">
+                        <label for="kpi1_${projectId}">KPIs:</label>
+                        <input type="text" id="kpi1_${projectId}" name="kpis[]">
+                        <button type="button" class="add-field" data-section="kpis_${projectId}" onclick="addField('kpis_${projectId}')">+</button>
+                    </div>
+                    <div id="risks_${projectId}">
+                        <label for="risk1_${projectId}">Risks:</label>
+                        <input type="text" id="risk1_${projectId}" name="risks[]">
+                        <button type="button" class="add-field" data-section="risks_${projectId}" onclick="addField('risks_${projectId}')">+</button>
+                    </div>
+                    <div id="mitigation_strategies_${projectId}">
+                        <label for="mitigation_strategy1_${projectId}">Mitigation Strategies:</label>
+                        <input type="text" id="mitigation_strategy1_${projectId}" name="mitigation_strategies[]">
+                    </div>
+                    <button type="button" class="form-button" onclick="prevPage('${projectId}', 3)">Previous</button>
+                    <button type="button" class="form-button" onclick="nextPage('${projectId}', 3)">Next</button>
+                </div>
+                <div class="form-page" id="page4-${projectId}" style="display: none;">
+                    <h3>Page 4: Target Participants</h3>
+                    <label for="target_participants_${projectId}" class="form-label">Target Participants:</label>
+                    <input type="number" id="target_participants_${projectId}" name="target_participants" class="form-input">
+                    <button type="button" class="form-button" onclick="prevPage('${projectId}', 4)">Previous</button>
+                    <button type="submit" class="form-button">Submit</button>
+                </div>
+            </form>
+        `;
+    }
+                // Show the first page by default
+                document.getElementById(`page1-${projectId}`).style.display = 'block';
+            } else {
+                // If no project is selected, clear the charter form container
+                document.getElementById('charterFormContainer_' + userId).innerHTML = '';
+            }
+        }
 
-    <button type="submit" class="form-button">Create Charter</button>
-</form>
+        function nextPage(projectId, currentPageNumber) {
+            document.getElementById(`page${currentPageNumber}-${projectId}`).style.display = 'none';
+            document.getElementById(`page${currentPageNumber + 1}-${projectId}`).style.display = 'block';
+        }
 
-<!-- Include the footer -->
-<%- include('partials/footer') %>    
+        function prevPage(projectId, currentPageNumber) {
+            document.getElementById(`page${currentPageNumber}-${projectId}`).style.display = 'none';
+            document.getElementById(`page${currentPageNumber - 1}-${projectId}`).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

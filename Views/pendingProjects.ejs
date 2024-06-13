@@ -18,9 +18,9 @@
             <% project.forEach(function(project) { %>
             <tr>
                 <td><%= project.project_name %></td>
-                <td><%= project.submitter_name %></td>
-                <td><%= project.submission_timestamp %></td>
-                <td>
+                <td><%= project.username %></td>
+                <td><%= project.submission_time  %></td>
+                <td> 
                     <form method="post" action="/activeprojects/add">
                         <% console.log(project); %>
                         <input type="hidden" name="pending_project_id" value="<%= project.pending_project_id %>">

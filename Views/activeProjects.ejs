@@ -17,13 +17,14 @@
                 <% activeProjects.forEach(function(project) { %>
                 <tr>
                     <td><%= project.project_name %></td>
-                    <td><%= project.submitter_name %></td>
-                    <td><%= project.submission_timestamp %></td>
+                    <td><%= project.username %></td>
+                    <td><%= project.submission_time %></td>
                     <td>
                         <!-- Add action buttons for the admin to approve or reject projects -->
                         <form method="post" action="#">
                             <button type="submit">See More</button>
                         </form>
+                        
                     </td>
                 </tr>
                 <% }); %>
