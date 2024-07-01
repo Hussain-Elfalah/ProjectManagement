@@ -43,7 +43,11 @@ overflow-x: hidden;
 background-color: rgb(237, 237, 237);
 
 }
-
+body {
+    display: flex;
+    margin: 0; /* Remove default margin */
+    height: 100vh; /* Ensure the body takes the full height */
+}
 a
 {
 color: black;
@@ -120,9 +124,12 @@ color: #41f1b6;
 color: #ffbb55;
 }
 
-aside
-{
-height: 100vh;
+aside {
+    width: 14rem; /* Fixed width for the sidebar */
+    background-color: #f8f9fa; /* Sidebar background color */
+    display: flex;
+    flex-direction: column; /* Ensure sidebar items are stacked vertically */
+    justify-content: space-between; /* Space out items vertically */
 }
 
 aside .Top
@@ -605,12 +612,13 @@ main .options a > div small{
     display: block;
     text-decoration: none;
 }
-main
-{
-    margin-top: 1rem !important;
-    text-decoration: none;
+main {
+    margin-left: 14rem; /* Same width as the aside */
+    flex-grow: 1; /* Allow main to take the remaining space */
+    padding: 2rem; /* Main content padding */
+    background-color: #f1f1f1; /* Background color for main content */
+    overflow-y: auto; /* Allow scrolling if content overflows */
 }
-
 main h1{
     font-weight: 700;
     font-size: 1.8rem;

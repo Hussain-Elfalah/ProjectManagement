@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Project Charter</title>
     <style>
-        /* Your existing CSS styles here */
         h2, h3 {
             color: #333;
         }
@@ -98,7 +97,6 @@
             background-color: #f2f2f2;
         }
 
-        /* Additional styles for the content area */
         .dashboard {
             display: flex;
             flex-wrap: wrap;
@@ -115,7 +113,6 @@
             width: calc(33.33% - 20px);
         }
 
-        /* Responsive adjustments */
         @media only screen and (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -129,6 +126,10 @@
 
             main {
                 margin-left: 0;
+                width: 100%;
+            }
+
+            .card {
                 width: 100%;
             }
         }
@@ -155,27 +156,32 @@
                     %>
                 </select>
 
+
+
                 <!-- Charter Form - Add -->
                 <div id="charterForm">
-                    <h3>Charter Form</h3>
-                    <form id="charterFormFieldsAdd" method="POST" action="/charters/add">
+                    <h3>Project Closure Form</h3>
+                    <form id="charterFormFieldsAdd" method="POST" action="/closure/add">
                         <input type="hidden" id="project_id" name="project_id">
                         <input type="hidden" id="submitter_name" name="submitter_name" value="<%= username %>">
-                        <input type="hidden" id="charter_id" name="charter_id">
-                        <label for="start_date">Start Date:</label>
-                        <input type="date" id="start_date" name="start_date"><br>
-                        <label for="end_date">End Date:</label>
-                        <input type="date" id="end_date" name="end_date"><br>
-                        <label for="description">Description:</label>
-                        <textarea id="description" name="description"></textarea><br>
-                        <label for="kpis">KPIs:</label>
-                        <textarea id="kpis" name="kpis"></textarea><br>
-                        <label for="risks">Risks:</label>
-                        <textarea id="risks" name="risks"></textarea><br>
-                        <label for="mitigation_strategies">Mitigation Strategies:</label>
-                        <textarea id="mitigation_strategies" name="mitigation_strategies"></textarea><br>
-                        <label for="target_participants">Target Participants:</label>
-                        <textarea id="target_participants" name="target_participants"></textarea><br>
+                        <label for="start_date_add">Start Date:</label>
+                        <input type="date" id="start_date_add" name="start_date"><br>
+                        <label for="end_date_add">End Date:</label>
+                        <input type="date" id="end_date_add" name="end_date"><br>
+                        <label for="project_feedback_add">Project Feedback:</label>
+                        <textarea id="project_feedback_add" name="project_feedback"></textarea><br>
+                        <label for="kpis_add">KPIs:</label>
+                        <textarea id="kpis_add" name="kpis"></textarea><br>
+                        <label for="risks_add">Risks:</label>
+                        <textarea id="risks_add" name="risks"></textarea><br>
+                        <label for="mitigation_strategies_add">Mitigation Strategies:</label>
+                        <textarea id="mitigation_strategies_add" name="mitigation_strategies"></textarea><br>
+                        <label for="lessons_learned_add">Lessons Learned:</label>
+                        <textarea id="lessons_learned_add" name="lessons_learned"></textarea><br>
+                        <label for="total_male_participants_add">Total Male Participants:</label>
+                        <textarea id="total_male_participants_add" name="total_male_participants"></textarea><br>
+                        <label for="total_female_participants_add">Total Female Participants:</label>
+                        <textarea id="total_female_participants_add" name="total_female_participants"></textarea><br>
                         <button type="submit">Submit</button>
                         <button type="button" id="editBtn" onclick="toggleForms()">Edit</button>
                     </form>
@@ -183,25 +189,28 @@
 
                 <!-- Charter Form - Edit -->
                 <div id="charterFormEdit">
-                    <h3>Charter Form - Edit</h3>
-                    <form id="charterFormFieldsEdit" method="POST" action="/charters/edit">
+                    <h3>Project Closure Form - Edit</h3>
+                    <form id="charterFormFieldsEdit" method="POST" action="/closure/edit">
                         <input type="hidden" id="project_id_edit" name="project_id">
                         <input type="hidden" id="submitter_name_edit" name="submitter_name" value="<%= username %>">
-                        <input type="hidden" id="charter_id_edit" name="charter_id">
                         <label for="start_date_edit">Start Date:</label>
                         <input type="date" id="start_date_edit" name="start_date"><br>
                         <label for="end_date_edit">End Date:</label>
                         <input type="date" id="end_date_edit" name="end_date"><br>
-                        <label for="description_edit">Description:</label>
-                        <textarea id="description_edit" name="description"></textarea><br>
+                        <label for="project_feedback_edit">Project Feedback:</label>
+                        <textarea id="project_feedback_edit" name="project_feedback"></textarea><br>
                         <label for="kpis_edit">KPIs:</label>
                         <textarea id="kpis_edit" name="kpis"></textarea><br>
                         <label for="risks_edit">Risks:</label>
                         <textarea id="risks_edit" name="risks"></textarea><br>
                         <label for="mitigation_strategies_edit">Mitigation Strategies:</label>
                         <textarea id="mitigation_strategies_edit" name="mitigation_strategies"></textarea><br>
-                        <label for="target_participants_edit">Target Participants:</label>
-                        <textarea id="target_participants_edit" name="target_participants"></textarea><br>
+                        <label for="lessons_learned_edit">Lessons Learned:</label>
+                        <textarea id="lessons_learned_edit" name="lessons_learned"></textarea><br>
+                        <label for="total_male_participants_edit">Total Male Participants:</label>
+                        <textarea id="total_male_participants_edit" name="total_male_participants"></textarea><br>
+                        <label for="total_female_participants_edit">Total Female Participants:</label>
+                        <textarea id="total_female_participants_edit" name="total_female_participants"></textarea><br>
                         <button type="submit">Update</button>
                         <button type="button" id="cancelBtn" onclick="toggleForms()">Cancel</button>
                     </form>
@@ -214,25 +223,27 @@
                             <tr>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Description</th>
+                                <th>Project Feedback</th>
                                 <th>KPIs</th>
                                 <th>Risks</th>
                                 <th>Mitigation Strategies</th>
-                                <th>Target Participants</th>
+                                <th>Total Male Participants</th>
+                                <th>Total Female Participants</th>
                                 <th>Submitter Name</th>
                             </tr>
                         </thead>
                         <tbody id="charterTableBody">
-                            <% charterData.forEach(charter => { %>
-                                <tr data-project-id="<%= charter.project_id %>">
-                                    <td><%= charter.start_date %></td>
-                                    <td><%= charter.end_date %></td>
-                                    <td><%= charter.description %></td>
-                                    <td><%= charter.kpis %></td>
-                                    <td><%= charter.risks %></td>
-                                    <td><%= charter.mitigation_strategies %></td>
-                                    <td><%= charter.target_participants %></td>
-                                    <td><%= charter.submitter_name %></td>
+                            <% closureData.forEach(closure => { %>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td><%= closure.start_date %></td>
+                                    <td><%= closure.end_date %></td>
+                                    <td><%= closure.project_feedback %></td>
+                                    <td><%= closure.kpis %></td>
+                                    <td><%= closure.risks %></td>
+                                    <td><%= closure.mitigation_strategies %></td>
+                                    <td><%= closure.total_male_participants %></td>
+                                    <td><%= closure.total_female_participants %></td>
+                                    <td><%= closure.submitter_name %></td>
                                 </tr>
                             <% }); %>
                         </tbody>
@@ -242,7 +253,6 @@
         <% } %>
     </main>
     <script>
-        // Function to toggle between Add and Edit forms
         function toggleForms() {
             const formAdd = document.getElementById('charterForm');
             const formEdit = document.getElementById('charterFormEdit');
@@ -262,35 +272,32 @@
             const tableBody = document.getElementById('charterTableBody');
 
             if (projectId) {
-                // Populate Add form fields with selected project data
                 formAdd.querySelector('#project_id').value = projectId;
-                formAdd.querySelector('#start_date').value = '';
-                formAdd.querySelector('#end_date').value = '';
-                formAdd.querySelector('#description').value = '';
-                formAdd.querySelector('#kpis').value = '';
-                formAdd.querySelector('#risks').value = '';
-                formAdd.querySelector('#mitigation_strategies').value = '';
-                formAdd.querySelector('#target_participants').value = '';
+                formAdd.querySelector('#start_date_add').value = '';
+                formAdd.querySelector('#end_date_add').value = '';
+                formAdd.querySelector('#project_feedback_add').value = '';
+                formAdd.querySelector('#kpis_add').value = '';
+                formAdd.querySelector('#risks_add').value = '';
+                formAdd.querySelector('#mitigation_strategies_add').value = '';
+                formAdd.querySelector('#total_male_participants_add').value = '';
+                formAdd.querySelector('#total_female_participants_add').value = '';
 
-                // Populate Edit form fields with selected project data
                 formEdit.querySelector('#project_id_edit').value = projectId;
                 formEdit.querySelector('#start_date_edit').value = '';
                 formEdit.querySelector('#end_date_edit').value = '';
-                formEdit.querySelector('#description_edit').value = '';
+                formEdit.querySelector('#project_feedback_edit').value = '';
                 formEdit.querySelector('#kpis_edit').value = '';
                 formEdit.querySelector('#risks_edit').value = '';
                 formEdit.querySelector('#mitigation_strategies_edit').value = '';
-                formEdit.querySelector('#target_participants_edit').value = '';
+                formEdit.querySelector('#total_male_participants_edit').value = '';
+                formEdit.querySelector('#total_female_participants_edit').value = '';
 
-                // Filter the charter data based on the selected project ID
                 filterCharterData(projectId);
 
-                // Display the relevant form and table
                 document.getElementById('charterForm').style.display = 'block';
                 document.getElementById('charterFormEdit').style.display = 'none';
                 document.getElementById('charterTable').style.display = 'block';
             } else {
-                // If no project is selected, hide the form and table
                 document.getElementById('charterForm').style.display = 'none';
                 document.getElementById('charterFormEdit').style.display = 'none';
                 document.getElementById('charterTable').style.display = 'none';

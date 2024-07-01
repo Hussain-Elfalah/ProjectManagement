@@ -138,24 +138,28 @@ const renderUserManagementPage = async (req, res) => {
 
 const renderCharterInfo = async (req, res) => {
   try {
-    const projectId = req.params.projectId;
-    console.log('Fetching charter data for projectId:', projectId);
-    
-    const response = await axios.get(`${API_URL}/charters/${projectId}`);
-    const charterData = response.data;  // Assuming response.data is the charter data you want to render
+      const projectId = req.params.id; 
+      if (!projectId) {
+          return res.status(400).json({ error: 'Project ID is required' });
+      }
+      console.log('Fetching charter data for projectId:', projectId);
+      
+      const response = await axios.get(`${API_URL}/charters/${projectId}`);
+      const projectsResponse = await axios.get(`${API_URL}/users/view`);
+      const projectsData = projectsResponse.data;
 
-    res.render("charter.ejs", 
-    {
-      charterData: charterData, 
-      username: req.user.username,  
-      userId: req.user.id,  
-    });
+      res.render("charter.ejs", {
+          projects: projectsData, 
+          username: req.user.username,  
+          userId: req.user.id,  
+      });
 
   } catch (error) {
-    console.error('Error fetching charter data:', error);
-    res.status(500).json({ error: 'Failed to fetch charter data' });
+      console.error('Error fetching charter data:', error);
+      res.status(500).json({ error: 'Failed to fetch charter data' });
   }
 };
+
 
 const renderProjectManagementPage = async (req, res) => {
   try {
@@ -219,6 +223,14 @@ const renderActiveProjects = async (req, res) => {
   }
 };
 
+const renderActivitiesPage = async (req, res) => {
+  try {
+    res.render('activities.ejs');
+  } catch (error) {
+    console.error('Error fetching user or projects data:', error);
+  }
+}
+
 const renderUserIndexPage = async (req, res) => {
   try {
     res.render('userIndex.ejs');
@@ -246,6 +258,63 @@ const renderCharterPage = async (req, res) => {
   }
 };
 
+const renderProjectClosurePage = async (req, res) => {
+  try {
+    const response = await axios.get(`${API_URL}/project_closures`);
+    const closureData = response.data;
+    const projectsResponse = await axios.get(`${API_URL}/users/view`);
+    const projectsData = projectsResponse.data;
+
+    res.render('projectClosure.ejs', {
+      username: req.user.username,  
+      userId: req.user.id,          
+      projects: projectsData,
+      closureData: closureData,
+    });
+  } catch (error) {
+    console.error('Error fetching user or projects data:', error);
+    res.status(500).send('Error fetching data');
+  }
+};
+
+const renderActivityFormPage = async (req, res) => {
+  try {
+    const response = await axios.get(`${API_URL}/activity_forms`);
+    const formData = response.data;
+    const projectsResponse = await axios.get(`${API_URL}/users/view`);
+    const projectsData = projectsResponse.data;
+
+    res.render('activityForm.ejs', {
+      username: req.user.username,  
+      userId: req.user.id,          
+      projects: projectsData,
+      formData: formData,
+    });
+  } catch (error) {
+    console.error('Error fetching user or projects data:', error);
+    res.status(500).send('Error fetching data');
+  }
+};
+
+
+const renderActivityClosurePage = async (req, res) => {
+  try {
+    const response = await axios.get(`${API_URL}/activity_closures`);
+    const closureData = response.data;
+    const projectsResponse = await axios.get(`${API_URL}/users/view`);
+    const projectsData = projectsResponse.data;
+
+    res.render('activityClosure.ejs', {
+      username: req.user.username,  
+      userId: req.user.id,          
+      projects: projectsData,
+      closureData: closureData,
+    });
+  } catch (error) {
+    console.error('Error fetching user or projects data:', error);
+    res.status(500).send('Error fetching data');
+  }
+};
 
 // Adding functions
 const addUser = async (req, res) => {
@@ -315,6 +384,120 @@ const addCharter = async (req, res) => {
   }
 };
 
+const addActivityForm = async (req, res) => {
+  try {
+    const {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      target_participants,
+      submitter_name
+    } = req.body;
+
+    const form = {
+      project_id,
+      start_date,
+      end_date,
+      description: description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      target_participants,
+      submitter_name
+    };
+
+    console.log('Sending activity Form:', form);
+
+    await axios.post(`${API_URL}/activity_forms/add`, form);
+    
+    res.redirect('/activity_form');
+  } catch (error) {
+    console.error('Error creating activity form:', error);
+    res.status(500).redirect('/activities');
+  }
+};
+
+const addProjectClosure = async (req, res) => {
+  try {
+    const {
+      project_id,
+      start_date,
+      end_date,
+      project_feedback,
+      lessons_learned,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants
+    } = req.body;
+
+    const projectClosure = {
+      project_id,
+      start_date,
+      end_date,
+      project_feedback,
+      lessons_learned,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants
+    };
+
+    console.log('Sending project clsoure:', projectClosure);
+
+    await axios.post(`${API_URL}/project_closures/add`, projectClosure);
+    
+    res.redirect('/closure');
+  } catch (error) {
+    console.error('Error creating closure:', error);
+    res.status(500).redirect('/index');
+  }
+};
+
+const addActivityClosure = async (req, res) => {
+  try {
+    const {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants,
+      submitter_name
+    } = req.body;
+
+    const Closure = {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants,
+      submitter_name
+    };
+
+    console.log('Adding Activity Closure:', Closure);
+
+    await axios.post(`${API_URL}/activity_closures/add`, Closure);
+    
+    res.redirect('/activity_closure');
+  } catch (error) {
+    console.error('Error Adding Project:', error);
+    res.status(500).redirect('/activities');
+  }
+};
 
 const assignProject = async (req, res) => {
   try {
@@ -349,6 +532,83 @@ const addToActive = async (req, res) => {
 };
 
 // Editing functions
+
+//Charter Edit
+const editCharter = async (req, res) => {
+  try {
+    const {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      target_participants,
+      submitter_name,
+      charter_id 
+    } = req.body;
+    const charter = {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      target_participants,
+      submitter_name
+    };
+
+    console.log('Updating charter:', charter);
+
+    await axios.patch(`${API_URL}/charters/${project_id}/edit`, charter);
+    
+    res.redirect('/charter');
+  } catch (error) {
+    console.error('Error updating project:', error);
+    res.status(500).redirect('/index');
+  }
+};
+
+//Charter Edit
+const editActivityForm = async (req, res) => {
+  try {
+    const {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      target_participants,
+      submitter_name, 
+    } = req.body;
+
+    const form = {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      target_participants,
+      submitter_name
+    };
+
+    console.log('Updating activity form:', form);
+
+    await axios.patch(`${API_URL}/activity_forms/${project_id}/edit`, form);
+    
+    res.redirect('/activity_form');
+  } catch (error) {
+    console.error('Error updating activity form:', error);
+    res.status(500).redirect('/activities');
+  }
+};
+
 const editUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -374,6 +634,86 @@ const editProject = async (req, res) => {
   } catch (error) {
     console.error('Error updating user:', error);
     res.status(500).redirect('/ProjectManagement');
+  }
+};
+
+const editProjectClosure = async (req, res) => {
+  try {
+    const {
+      project_id,
+      start_date,
+      end_date,
+      project_feedback,
+      lessons_learned,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants,
+      submitter_name
+    } = req.body;
+
+    const projectClosure = {
+      project_id,
+      start_date,
+      end_date,
+      project_feedback,
+      lessons_learned,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants,
+      submitter_name
+    };
+
+    console.log('Updating Project Closure:', projectClosure);
+
+    await axios.patch(`${API_URL}/project_closures/${project_id}/edit`, projectClosure);
+    
+    res.redirect('/closure');
+  } catch (error) {
+    console.error('Error updating project:', error);
+    res.status(500).redirect('/index');
+  }
+};
+
+const editActivityClosure = async (req, res) => {
+  try {
+    const {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants,
+      submitter_name
+    } = req.body;
+
+    const Closure = {
+      project_id,
+      start_date,
+      end_date,
+      description,
+      kpis,
+      risks,
+      mitigation_strategies,
+      total_male_participants,
+      total_female_participants,
+      submitter_name
+    };
+
+    console.log('Updating Activity Closure:', Closure);
+
+    await axios.patch(`${API_URL}/activity_closures/${project_id}/edit`, Closure);
+    
+    res.redirect('/activityclosure');
+  } catch (error) {
+    console.error('Error updating project:', error);
+    res.status(500).redirect('/activities');
   }
 };
 
@@ -438,7 +778,11 @@ app.get('/index', isAuthenticated, renderUserIndexPage);
 app.get('/charter', isAuthenticated, renderCharterPage);
 app.get('/ProjectManagement', isAuthenticated, renderProjectManagementPage);
 app.get('/', renderLoginPage);
-app.get("/charters/:projectId", isAuthenticated, renderCharterInfo);
+app.get('/charters/:id', isAuthenticated, renderCharterInfo);
+app.get('/closure', isAuthenticated, renderProjectClosurePage);
+app.get('/activities', isAuthenticated, renderActivitiesPage);
+app.get('/activity_form', isAuthenticated, renderActivityFormPage);
+app.get('/activity_closure', isAuthenticated, renderActivityClosurePage);
 
 app.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -489,6 +833,13 @@ app.post('/users/:id/delete/projects', deleteAssignedProjects);
 app.post('/projects/:id/edit', editProject);
 app.post('/projects/:id/delete', deleteProject);
 app.post('/charters/add', addCharter);
+app.post('/charters/edit', editCharter);
+app.post('/closure/add', addProjectClosure);
+app.post('/closure/edit', editProjectClosure);
+app.post('/activity_forms/add', addActivityForm);
+app.post('/activity_form/edit', editActivityForm);
+app.post('/activity_closure/add', addActivityClosure);
+app.post('/activity_closure/edit', editActivityClosure);
 
 // Start the server
 app.listen(port, () => {

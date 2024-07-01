@@ -364,17 +364,91 @@ app.post('/charters/add', async (req, res) => {
 // Update a charter
 app.patch('/charters/:id/edit', async (req, res) => {
   const { id } = req.params;
-  const { start_date, end_date, projects_id, project_description, kpis, risks, mitigation_strategies, target_participants, submitter_id } = req.body;
-  const query = 'UPDATE charter SET start_date = $1, end_date = $2, projects_id = $3, project_description = $4, kpis = $5, risks = $6, mitigation_strategies = $7, submitter_id = $8, target_participants = $9 WHERE id = $10';
-  const values = [start_date, end_date, projects_id, project_description, kpis, risks, mitigation_strategies, target_participants, submitter_id, id];
+  const {
+    start_date,
+    end_date,
+    project_id,
+    description,
+    kpis,
+    risks,
+    mitigation_strategies,
+    target_participants,
+    submitter_name
+  } = req.body;
+
   try {
+    let setClause = ''; // Initialize an empty string for SET clause
+    const values = [];
+    let valueIndex = 1; // Initialize value index for parameterized query
+
+    // Check each field and append to SET clause if present
+    if (start_date !== undefined && start_date !== '') {
+      setClause += `start_date = $${valueIndex}, `;
+      values.push(start_date);
+      valueIndex++;
+    }
+    if (end_date !== undefined && end_date !== '') {
+      setClause += `end_date = $${valueIndex}, `;
+      values.push(end_date);
+      valueIndex++;
+    }
+    if (project_id !== undefined && project_id !== '') {
+      setClause += `project_id = $${valueIndex}, `;
+      values.push(project_id);
+      valueIndex++;
+    }
+    if (description !== undefined && description !== '') {
+      setClause += `description = $${valueIndex}, `;
+      values.push(description);
+      valueIndex++;
+    }
+    if (kpis !== undefined && kpis !== '') {
+      setClause += `kpis = $${valueIndex}, `;
+      values.push(kpis);
+      valueIndex++;
+    }
+    if (risks !== undefined && risks !== '') {
+      setClause += `risks = $${valueIndex}, `;
+      values.push(risks);
+      valueIndex++;
+    }
+    if (mitigation_strategies !== undefined && mitigation_strategies !== '') {
+      setClause += `mitigation_strategies = $${valueIndex}, `;
+      values.push(mitigation_strategies);
+      valueIndex++;
+    }
+    if (target_participants !== undefined && target_participants !== '') {
+      setClause += `target_participants = $${valueIndex}, `;
+      values.push(target_participants);
+      valueIndex++;
+    }
+    if (submitter_name !== undefined && submitter_name !== '') {
+      setClause += `submitter_name = $${valueIndex}, `;
+      values.push(submitter_name);
+      valueIndex++;
+    }
+
+    // Remove the trailing comma and space from the SET clause
+    setClause = setClause.slice(0, -2);
+
+    // Construct the UPDATE query dynamically
+    if (setClause) {
+      const query = `UPDATE charter SET ${setClause} WHERE project_id = $${valueIndex}`;
+      values.push(id);
+
+      // Execute the query
       const result = await db.query(query, values);
       res.json(result.rows[0]);
+    } else {
+      res.status(400).send('No valid fields to update');
+    }
   } catch (err) {
-      console.error('Error executing query', err);
-      res.status(500).send('Error updating charter');
+    console.error('Error executing query', err);
+    res.status(500).send('Error updating charter');
   }
 });
+
+
   
   // Delete a charter
   app.delete('/charters/:id/delete', async (req, res) => {
@@ -505,9 +579,9 @@ app.delete('/activeprojects/:id/delete', async (req, res) => {
 // --------------------------------------- ACTIVITY FORM ---------------------------------------------------
 // Create a new activity form
 app.post('/activity_forms/add', async (req, res) => {
-    const { start_date, end_date, projects_id, activity_description, kpis, risks, target_participants, mitigation_strategies } = req.body;
-    const query = 'INSERT INTO activity_form (start_date, end_date, projects_id, activity_description, kpis, risks, target_participants, mitigation_strategies) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)';
-    const values = [start_date, end_date, projects_id, activity_description, kpis, risks, target_participants, mitigation_strategies];
+    const { start_date, end_date, project_id, description, kpis, risks, target_participants, mitigation_strategies, submitter_name } = req.body;
+    const query = 'INSERT INTO activity_form (start_date, end_date, project_id, description, kpis, risks, target_participants, mitigation_strategies, submitter_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+    const values = [start_date, end_date, project_id, description, kpis, risks, target_participants, mitigation_strategies, submitter_name];
     try {
       const result = await db.query(query, values);
       res.json(result.rows[0]);
@@ -531,17 +605,94 @@ app.post('/activity_forms/add', async (req, res) => {
   // Update an activity form
   app.patch('/activity_forms/:id/edit', async (req, res) => {
     const { id } = req.params;
-    const { start_date, end_date, projects_id, activity_description, kpis, risks, mitigation_strategies, target_participants } = req.body;
-    const query = 'UPDATE activity_form SET start_date = $1, end_date = $2, projects_id = $3, description = $4, kpis = $5, risks = $6, mitigation_strategies = $7, target_participants = $8 WHERE id = $9';
-    const values = [start_date, end_date, projects_id, activity_description, kpis, risks, mitigation_strategies, target_participants, id];
-    try {
+  const {
+    start_date,
+    end_date,
+    project_id,
+    description,
+    kpis,
+    risks,
+    mitigation_strategies,
+    target_participants,
+    submitter_name
+  } = req.body;
+
+  try {
+    let setClause = ''; // Initialize an empty string for SET clause
+    const values = [];
+    let valueIndex = 1; // Initialize value index for parameterized query
+
+    // Check each field and append to SET clause if present
+    if (start_date !== undefined && start_date !== '') {
+      setClause += `start_date = $${valueIndex}, `;
+      values.push(start_date);
+      valueIndex++;
+    }
+    if (submitter_name !== undefined && submitter_name !== '') {
+      setClause += `submitter_name = $${valueIndex}, `;
+      values.push(submitter_name);
+      valueIndex++;
+    }
+    if (end_date !== undefined && end_date !== '') {
+      setClause += `end_date = $${valueIndex}, `;
+      values.push(end_date);
+      valueIndex++;
+    }
+    if (project_id !== undefined && project_id !== '') {
+      setClause += `project_id = $${valueIndex}, `;
+      values.push(project_id);
+      valueIndex++;
+    }
+    if (description !== undefined && description !== '') {
+      setClause += `description = $${valueIndex}, `;
+      values.push(description);
+      valueIndex++;
+    }
+    if (kpis !== undefined && kpis !== '') {
+      setClause += `kpis = $${valueIndex}, `;
+      values.push(kpis);
+      valueIndex++;
+    }
+    if (risks !== undefined && risks !== '') {
+      setClause += `risks = $${valueIndex}, `;
+      values.push(risks);
+      valueIndex++;
+    }
+    if (mitigation_strategies !== undefined && mitigation_strategies !== '') {
+      setClause += `mitigation_strategies = $${valueIndex}, `;
+      values.push(mitigation_strategies);
+      valueIndex++;
+    }
+    if (target_participants !== undefined && target_participants !== '') {
+      setClause += `target_participants = $${valueIndex}, `;
+      values.push(target_participants);
+      valueIndex++;
+    }
+    if (submitter_name !== undefined && submitter_name !== '') {
+      setClause += `submitter_name = $${valueIndex}, `;
+      values.push(submitter_name);
+      valueIndex++;
+    }
+
+    // Remove the trailing comma and space from the SET clause
+    setClause = setClause.slice(0, -2);
+
+    // Construct the UPDATE query dynamically
+    if (setClause) {
+      const query = `UPDATE activity_form SET ${setClause} WHERE project_id = $${valueIndex}`;
+      values.push(id);
+
+      // Execute the query
       const result = await db.query(query, values);
       res.json(result.rows[0]);
-    } catch (err) {
-      console.error('Error executing query', err);
-      res.status(500).send('Error updating activity form');
+    } else {
+      res.status(400).send('No valid fields to update');
     }
-  });
+  } catch (err) {
+    console.error('Error executing query', err);
+    res.status(500).send('Error updating charter');
+  }
+});
   
   // Delete an activity form
   app.delete('/activity_forms/:id/delete', async (req, res) => {
@@ -560,9 +711,9 @@ app.post('/activity_forms/add', async (req, res) => {
 // --------------------------------------- ACTIVITY CLOSURE ---------------------------------------------------
 // Create a new activity closure
 app.post('/activity_closures/add', async (req, res) => {
-    const { start_date, end_date, projects_id, activity_description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants } = req.body;
-    const query = 'INSERT INTO activity_closure (start_date, end_date, projects_id, activity_description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-    const values = [start_date, end_date, projects_id, activity_description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants];
+    const { start_date, end_date, project_id, description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, submitter_name } = req.body;
+    const query = 'INSERT INTO activity_closure (start_date, end_date, project_id, description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, submitter_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
+    const values = [start_date, end_date, project_id, description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, submitter_name];
     try {
       const result = await db.query(query, values);
       res.json(result.rows[0]);
@@ -586,16 +737,94 @@ app.post('/activity_closures/add', async (req, res) => {
   // Update an activity closure
   app.put('/activity_closures/:id/edit', async (req, res) => {
     const { id } = req.params;
-    const { start_date, end_date, projects_id, activity_description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants } = req.body;
-    const query = 'UPDATE activity_closure SET start_date = $1, end_date = $2, projects_id = $3, activity_description = $4, kpis = $5, risks = $6, mitigation_strategies = $7, total_male_participants = $8, total_female_participants = $9 WHERE id = $10';
-    const values = [start_date, end_date, projects_id, activity_description, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, id];
-    try {
+  const {
+    project_id,
+    start_date,
+    end_date,
+    description,
+    submitter_name,
+    kpis,
+    risks,
+    mitigation_strategies,
+    total_male_participants,
+    total_female_participants
+  } = req.body;
+
+  try {
+    let setClause = ''; // Initialize an empty string for SET clause
+    const values = [];
+    let valueIndex = 1; // Initialize value index for parameterized query
+
+    // Check each field and append to SET clause if present
+    if (project_id !== undefined && project_id !== '') {
+      setClause += `project_id = $${valueIndex}, `;
+      values.push(project_id);
+      valueIndex++;
+    }
+    if (submitter_name !== undefined && submitter_name !== '') {
+      setClause += `submitter_name = $${valueIndex}, `;
+      values.push(submitter_name);
+      valueIndex++;
+    }
+    if (start_date !== undefined && start_date !== '') {
+      setClause += `start_date = $${valueIndex}, `;
+      values.push(start_date);
+      valueIndex++;
+    }
+    if (end_date !== undefined && end_date !== '') {
+      setClause += `end_date = $${valueIndex}, `;
+      values.push(end_date);
+      valueIndex++;
+    }
+    if (description !== undefined && description !== '') {
+      setClause += `description = $${valueIndex}, `;
+      values.push(description);
+      valueIndex++;
+    }
+    if (kpis !== undefined && kpis !== '') {
+      setClause += `kpis = $${valueIndex}, `;
+      values.push(kpis);
+      valueIndex++;
+    }
+    if (risks !== undefined && risks !== '') {
+      setClause += `risks = $${valueIndex}, `;
+      values.push(risks);
+      valueIndex++;
+    }
+    if (mitigation_strategies !== undefined && mitigation_strategies !== '') {
+      setClause += `mitigation_strategies = $${valueIndex}, `;
+      values.push(mitigation_strategies);
+      valueIndex++;
+    }
+    if (total_male_participants !== undefined && total_male_participants !== '') {
+      setClause += `total_male_participants = $${valueIndex}, `;
+      values.push(total_male_participants);
+      valueIndex++;
+    }
+    if (total_female_participants !== undefined && total_female_participants !== '') {
+      setClause += `total_female_participants = $${valueIndex}, `;
+      values.push(total_female_participants);
+      valueIndex++;
+    }
+
+    // Remove the trailing comma and space from the SET clause
+    setClause = setClause.slice(0, -2);
+
+    // Construct the UPDATE query dynamically
+    if (setClause) {
+      const query = `UPDATE activity_closure SET ${setClause} WHERE project_id = $${valueIndex} RETURNING *`;
+      values.push(id);
+
+      // Execute the query
       const result = await db.query(query, values);
       res.json(result.rows[0]);
-    } catch (err) {
-      console.error('Error executing query', err);
-      res.status(500).send('Error updating activity closure');
+    } else {
+      res.status(400).send('No valid fields to update');
     }
+  } catch (err) {
+    console.error('Error executing query', err);
+    res.status(500).send('Error updating activity closure');
+  }
   });
   
   // Delete an activity closure
@@ -615,9 +844,9 @@ app.post('/activity_closures/add', async (req, res) => {
 // --------------------------------------- PROJECT CLOSURE ---------------------------------------------------
 // Create a new project closure
 app.post('/project_closures/add', async (req, res) => {
-    const { projects_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants } = req.body;
-    const query = 'INSERT INTO project_closure (projects_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
-    const values = [projects_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants];
+    const { project_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, submitter_name } = req.body;
+    const query = 'INSERT INTO project_closure (project_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, submitter_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
+    const values = [project_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, submitter_name];
     try {
       const result = await db.query(query, values);
       res.json(result.rows[0]);
@@ -638,20 +867,106 @@ app.post('/project_closures/add', async (req, res) => {
     }
   });
   
+
   // Update a project closure
-  app.put('/project_closures/:id/edit', async (req, res) => {
-    const { id } = req.params;
-    const { projects_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants} = req.body;
-    const query = 'UPDATE project_closure SET projects_id = $1, start_date = $2, end_date = $3, project_feedback = $4, lessons_learned = $5, kpis = $6, risks = $7, mitigation_strategies = $8, total_male_participants = $9, total_female_participants = $10 WHERE id = $11 RETURNING *';
-    const values = [projects_id, start_date, end_date, project_feedback, lessons_learned, kpis, risks, mitigation_strategies, total_male_participants, total_female_participants, id];
-    try {
+app.patch('/project_closures/:id/edit', async (req, res) => {
+  const { id } = req.params;
+  const {
+    project_id,
+    start_date,
+    end_date,
+    project_feedback,
+    lessons_learned,
+    kpis,
+    risks,
+    mitigation_strategies,
+    total_male_participants,
+    total_female_participants,
+    submitter_name
+  } = req.body;
+
+  try {
+    let setClause = ''; // Initialize an empty string for SET clause
+    const values = [];
+    let valueIndex = 1; // Initialize value index for parameterized query
+
+    // Check each field and append to SET clause if present
+    if (project_id !== undefined && project_id !== '') {
+      setClause += `project_id = $${valueIndex}, `;
+      values.push(project_id);
+      valueIndex++;
+    }
+    if (start_date !== undefined && start_date !== '') {
+      setClause += `start_date = $${valueIndex}, `;
+      values.push(start_date);
+      valueIndex++;
+    }
+    if (end_date !== undefined && end_date !== '') {
+      setClause += `end_date = $${valueIndex}, `;
+      values.push(end_date);
+      valueIndex++;
+    }
+    if (project_feedback !== undefined && project_feedback !== '') {
+      setClause += `project_feedback = $${valueIndex}, `;
+      values.push(project_feedback);
+      valueIndex++;
+    }
+    if (lessons_learned !== undefined && lessons_learned !== '') {
+      setClause += `lessons_learned = $${valueIndex}, `;
+      values.push(lessons_learned);
+      valueIndex++;
+    }
+    if (submitter_name !== undefined && submitter_name !== '') {
+      setClause += `submitter_name = $${valueIndex}, `;
+      values.push(submitter_name);
+      valueIndex++;
+    }
+    if (kpis !== undefined && kpis !== '') {
+      setClause += `kpis = $${valueIndex}, `;
+      values.push(kpis);
+      valueIndex++;
+    }
+    if (risks !== undefined && risks !== '') {
+      setClause += `risks = $${valueIndex}, `;
+      values.push(risks);
+      valueIndex++;
+    }
+    if (mitigation_strategies !== undefined && mitigation_strategies !== '') {
+      setClause += `mitigation_strategies = $${valueIndex}, `;
+      values.push(mitigation_strategies);
+      valueIndex++;
+    }
+    if (total_male_participants !== undefined && total_male_participants !== '') {
+      setClause += `total_male_participants = $${valueIndex}, `;
+      values.push(total_male_participants);
+      valueIndex++;
+    }
+    if (total_female_participants !== undefined && total_female_participants !== '') {
+      setClause += `total_female_participants = $${valueIndex}, `;
+      values.push(total_female_participants);
+      valueIndex++;
+    }
+
+    // Remove the trailing comma and space from the SET clause
+    setClause = setClause.slice(0, -2);
+
+    // Construct the UPDATE query dynamically
+    if (setClause) {
+      const query = `UPDATE project_closure SET ${setClause} WHERE project_id = $${valueIndex} RETURNING *`;
+      values.push(id);
+
+      // Execute the query
       const result = await db.query(query, values);
       res.json(result.rows[0]);
-    } catch (err) {
-      console.error('Error executing query', err);
-      res.status(500).send('Error updating project closure');
+    } else {
+      res.status(400).send('No valid fields to update');
     }
-  });
+  } catch (err) {
+    console.error('Error executing query', err);
+    res.status(500).send('Error updating project closure');
+  }
+});
+
   
   // Delete a project closure
   app.delete('/project_closures/:id/delete', async (req, res) => {
