@@ -2,9 +2,6 @@ import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local"; // Import LocalStrategy
-import session from "express-session";
 import env from "dotenv";
 
 const app = express();
@@ -468,9 +465,9 @@ app.patch('/charters/:id/edit', async (req, res) => {
 
 // Create a new pending project
 app.post('/pendingprojects/add', async (req, res) => {
-  const { project_name } = req.body;
-  const query = 'INSERT INTO pending_projects (project_name, status) VALUES ($1, $2)';
-  const values = [project_name, 'Pending'];
+  const { project_name, submitter_name } = req.body;
+  const query = 'INSERT INTO pending_projects (project_name, stutas, submitter_name) VALUES ($1, $2, $3)';
+  const values = [project_name, 'Pending', submitter_name];
   try {
       const result = await db.query(query, values);
       res.json(result.rows[0]);
@@ -524,9 +521,9 @@ app.delete('/pendingprojects/:id/delete', async (req, res) => {
 
 // Create a new active project
 app.post('/activeprojects/add', async (req, res) => {
-  const { project_name } = req.body;
-  const query = 'INSERT INTO active_projects (project_name, status) VALUES ($1, $2) RETURNING *';
-  const values = [project_name, 'Active'];
+  const { project_name, submitter_name } = req.body;
+  const query = 'INSERT INTO active_projects (project_name, stutas, submitter_name) VALUES ($1, $2, $3) RETURNING *';
+  const values = [project_name, 'Active', submitter_name];
   try {
       const result = await db.query(query, values);
       res.json(result.rows[0]);

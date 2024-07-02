@@ -9,7 +9,6 @@
                     <th>Project Name</th>
                     <th>Submitter</th>
                     <th>Created at</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,15 +16,8 @@
                 <% activeProjects.forEach(function(project) { %>
                 <tr>
                     <td><%= project.project_name %></td>
-                    <td><%= project.username %></td>
-                    <td><%= project.submission_time %></td>
-                    <td>
-                        <!-- Add action buttons for the admin to approve or reject projects -->
-                        <form method="post" action="#">
-                            <button type="submit">See More</button>
-                        </form>
-                        
-                    </td>
+                    <td><%= project.submitter_name %></td>
+                    <td><%= project.submission_time  %></td>
                 </tr>
                 <% }); %>
             </tbody>

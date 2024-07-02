@@ -206,12 +206,9 @@ const renderPendingProjects = async (req, res) => {
 
 const renderActiveProjects = async (req, res) => {
   try {
-    const response = await axios.get(`${API_URL}/status/view`);
     const response2 = await axios.get(`${API_URL}/activeprojects`);
     res.render('activeProjects.ejs', {
-      project: response2.data,
-      projects: response2.data,
-      activeProjects: response.data,
+      activeProjects: response2.data,
     });
   } catch (error) {
     console.error('Error fetching active projects data:', error);
@@ -351,6 +348,7 @@ const addCharter = async (req, res) => {
   try {
     const {
       project_id,
+      project_name,
       start_date,
       end_date,
       description,
@@ -373,10 +371,15 @@ const addCharter = async (req, res) => {
       submitter_name
     };
 
+    const pendingData = {
+      submitter_name,
+      project_name
+    };
     console.log('Sending charter:', charter);
 
     await axios.post(`${API_URL}/charters/add`, charter);
-    
+    await axios.post(`${API_URL}/pendingprojects/add`, pendingData);
+
     res.redirect('/charter');
   } catch (error) {
     console.error('Error creating project:', error);
@@ -515,19 +518,17 @@ const assignProject = async (req, res) => {
 
 const addToActive = async (req, res) => {
   try {
-    const { project_id, charter_id, submitter_id, pending_project_id } = req.body;
+    const { project_id, project_name, submitter_name } = req.body;
+    console.log(project_name);
     await axios.post(`${API_URL}/activeprojects/add`, {
-      project_id,
-      charter_id,
-      submitter_id,
+      project_name,
+      submitter_name,
     });
     await axios.delete(`${API_URL}/pendingprojects/${project_id}/delete`);
     res.redirect('/activeProjects');
   } catch (error) {
     console.error('Error adding project to Active:', error);
-    res.status(500).redirect('/pendingProjects', {
-      error: 'Failed to add project to Active.',
-    });
+    res.status(500).redirect('/pendingProjects');
   }
 };
 
