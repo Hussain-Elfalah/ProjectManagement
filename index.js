@@ -304,7 +304,16 @@ app.get('/project/members/:project_id', async (req, res) => {
       res.status(500).send('Error retrieving project members');
   }
 });
-
+app.get('/project/members', async (req, res) => {
+  const query = 'SELECT * FROM project_members';
+  try {
+      const result = await db.query(query);
+      res.json(result.rows);
+  } catch (err) {
+      console.error('Error executing query', err);
+      res.status(500).send('Error retrieving project members');
+  }
+});
 // Remove a user from a project
 app.delete('/project/members/remove/:project_id/:user_id', async (req, res) => {
   const { project_id, user_id } = req.params;
@@ -732,7 +741,7 @@ app.post('/activity_closures/add', async (req, res) => {
   });
   
   // Update an activity closure
-  app.put('/activity_closures/:id/edit', async (req, res) => {
+  app.patch('/activity_closures/:id/edit', async (req, res) => {
     const { id } = req.params;
   const {
     project_id,
@@ -946,7 +955,7 @@ app.patch('/project_closures/:id/edit', async (req, res) => {
 
     // Remove the trailing comma and space from the SET clause
     setClause = setClause.slice(0, -2);
-
+    console.log(setClause);
     // Construct the UPDATE query dynamically
     if (setClause) {
       const query = `UPDATE project_closure SET ${setClause} WHERE project_id = $${valueIndex} RETURNING *`;
@@ -979,6 +988,75 @@ app.patch('/project_closures/:id/edit', async (req, res) => {
     }
   });
   
+// ----------------------------------------------- REPORTS -------------------------------------------------------------------
+// Create a new active project
+app.post('/report/add', async (req, res) => {
+  const { description, submitter_name, project_id} = req.body;
+  const query = 'INSERT INTO reports (description, submitter_name, project_id) VALUES ($1, $2, $3) RETURNING *';
+  const values = [description, submitter_name, project_id];
+  try {
+      const result = await db.query(query, values);
+      res.json(result.rows[0]);
+  } catch (err) {
+      console.error('Error executing query', err);
+      res.status(500).send('Error creating report');
+  }
+});
+
+// Get all reports
+app.get('/reports', async (req, res) => {
+  try {
+      const result = await db.query('SELECT * FROM reports');
+      res.json(result.rows);
+  } catch (err) {
+      console.error('Error executing query', err);
+      res.status(500).send('Error retrieving reports');
+  }
+});
+
+// Get specific reports
+app.get('/reports/:id', async (req, res) => {
+  try {
+    const { project_id } = req.body;
+    const query = 'SELECT * FROM reports where project_id = $1';
+    const values = [project_id];
+    const result = await db.query(query, values);
+    res.json(result.rows[0]);
+  } catch (err) {
+      console.error('Error executing query', err);
+      res.status(500).send('Error retrieving reports');
+  }
+});
+
+// Update a report
+app.patch('/report/:id/edit', async (req, res) => {
+  const { description, submitter_name } = req.body;
+  const query = 'UPDATE reports SET description = $1 WHERE submitter_name = $2 RETURNING *';
+  const values = [description, submitter_name];
+  try {
+      const result = await db.query(query, values);
+      res.json(result.rows[0]);
+  } catch (err) {
+      console.error('Error executing query', err);
+      res.status(500).send('Error updating report');
+  }
+});
+
+
+// Delete a report
+app.delete('/report/:id/delete', async (req, res) => {
+  const { id } = req.params;
+  const query = 'DELETE FROM reports WHERE id = $1';
+  const values = [id];
+  try {
+      await db.query(query, values);
+      res.send('Report deleted successfully');
+  } catch (err) {
+      console.error('Error executing query', err);
+      res.status(500).send('Error deleting report');
+  }
+});
+
 
 // ----------------------------------------------- VIEWS -------------------------------------------------------------------
 
@@ -1004,6 +1082,17 @@ app.patch('/project_closures/:id/edit', async (req, res) => {
       }
     });
     
+     // Get all users
+     app.get('/user/dashboard', async (req, res) => {
+      try {
+        const result = await db.query('SELECT * FROM project_summary_view');
+        res.json(result.rows);
+      } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).send('Error retrieving users');
+      }
+    });
+
       // Get all projects
       app.get('/projectmanagement/view', async (req, res) => {
         try {

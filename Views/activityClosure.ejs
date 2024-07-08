@@ -212,30 +212,42 @@
                 <div id="charterTable">
                     <h3>Saved activity closure Data</h3>
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Description</th>
-                                <th>KPIs</th>
-                                <th>Risks</th>
-                                <th>Mitigation Strategies</th>
-                                <th>Total Male Participants</th>
-                                <th>Total Female Participants</th>
-                                <th>Submitter Name</th>
-                            </tr>
-                        </thead>
                         <tbody id="charterTableBody">
                             <% closureData.forEach(closure => { %>
                                 <tr data-project-id="<%= closure.project_id %>">
+                                    <td>Start Date</td>
                                     <td><%= closure.start_date %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>End Date</td>
                                     <td><%= closure.end_date %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>Description</td>
                                     <td><%= closure.description %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>KPIs</td>
                                     <td><%= closure.kpis %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>Risks</td>
                                     <td><%= closure.risks %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>Mitigation Strategies</td>
                                     <td><%= closure.mitigation_strategies %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>Total Male Participants</td>
                                     <td><%= closure.total_male_participants %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>Total Female Participants</td>
                                     <td><%= closure.total_female_participants %></td>
+                                </tr>
+                                <tr data-project-id="<%= closure.project_id %>">
+                                    <td>Submitter Name</td>
                                     <td><%= closure.submitter_name %></td>
                                 </tr>
                             <% }); %>

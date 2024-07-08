@@ -1,0 +1,47 @@
+<!-- Include the sidebar -->
+<%- include('partials/Usidebar') %>
+<%
+// Debugging logs
+console.log("Passed username:", username);
+console.log("Passed userId:", userId);
+console.log("Passed projects:", projects);
+console.log("Passed data:", data);
+
+// Get all project_ids assigned to the logged-in user
+const assignedProjectIds = projects.filter(proj => proj.user_id === userId).map(proj => proj.project_id);
+console.log("Assigned Project IDs:", assignedProjectIds);
+
+// Filter reports based on assigned project_ids
+const filteredReports = data.filter(report => assignedProjectIds.includes(report.project_id));
+
+console.log("Filtered Reports:", filteredReports);
+%>
+<div class="table">
+    <table id="project-table">
+        <thead>
+            <tr>
+                <th>Report</th>
+                <th>Submitter</th>
+                <th>Submission Time</th>
+            </tr>
+        </thead>
+        <tbody id="report-table-body">
+            <% if (filteredReports.length === 0) { %>
+                <tr>
+                    <td colspan="3">No reports sent</td>
+                </tr>
+            <% } else { %>
+                <% filteredReports.forEach(report => { %>
+                    <tr data-project-id="<%= report.project_id %>">
+                        <td><%= report.description %></td>
+                        <td><%= report.submitter_name %></td>
+                        <td><%= report.created_at %></td>
+                    </tr>
+                <% }) %>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<!-- Include the footer -->
+<%- include('partials/footer') %>

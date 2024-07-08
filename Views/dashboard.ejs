@@ -1,19 +1,30 @@
- <!-- Include the sidebar -->
- <%- include('partials/sidebar') %>
-
- <div class="dashboard">
+<!-- Include the sidebar -->
+<%- include('partials/sidebar') %>
+<style>
+    input, textarea {
+        display: block;
+        margin-bottom: 15px;
+        padding: 10px;
+        width: 100%;
+        max-width: 400px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+</style>
+<div class="dashboard">
     <% let maleTotal = 0; %>
     <% let femaleTotal = 0; %>
     <% let projectClosed = 0; %>
-
     <% data.forEach(project => { %>
-        <% maleTotal += parseInt(project.male_participants); %>
-        <% femaleTotal += parseInt(project.female_participants); %>
         <% projectClosed += parseInt(project.num_project_closures); %>
     <% }) %>
-
+    <% participants.forEach(project => { %>
+        <% maleTotal += project.total_male_participants; %>
+        <% femaleTotal += project.total_female_participants; %>
+    <% }) %>
     <div class="card male-participation">
-       <div id="spanCardMale"><span class="material-symbols-sharp">man_2</span></div> 
+        <div id="spanCardMale"><span class="material-symbols-sharp">man_2</span></div> 
         <h2>Male Participation</h2>
         <p>Number of male participants:</p>
         <p><%= maleTotal %></p>
@@ -47,12 +58,33 @@
                         <td><%= project.project_name %></td>
                         <td><%= project.num_activity_forms %></td>
                         <td><%= project.num_activity_closures %></td>
-                        <td><a href="#">Report</a></td>
+                        <td>
+                            <a onclick="toggleEditForm('<%= project.project_id %>')">Report</a>
+                            <form id="editForm_<%= project.project_id %>" style="display: none;" method="post" action="/reports/add">
+                                <input type="hidden" name="project_id" value="<%= project.project_id %>">
+                                <input type="hidden" name="submitter_name" value="<%= username %>">
+                                <textarea name="description" id="description_<%= project.project_id %>"></textarea>
+                                <button type="submit">Send</button>
+                            </form>
+                        </td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
     </div>
 </div>
- <!-- Include the footer -->
-    <%- include('partials/footer') %>
+
+<script>
+    function toggleEditForm(project_id) {
+        console.log("Toggling form for project_id:", project_id);  // Debugging log
+        const editForm = document.getElementById(`editForm_${project_id}`);
+        if (editForm) {
+            editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+        } else {
+            console.error("Form not found for project_id:", project_id);  // Error log
+        }
+    }
+</script>
+
+<!-- Include the footer -->
+<%- include('partials/footer') %>

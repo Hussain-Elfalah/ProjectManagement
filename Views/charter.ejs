@@ -210,28 +210,38 @@
                 <div id="charterTable">
                     <h3>Saved Charter Data</h3>
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Description</th>
-                                <th>KPIs</th>
-                                <th>Risks</th>
-                                <th>Mitigation Strategies</th>
-                                <th>Target Participants</th>
-                                <th>Submitter Name</th>
-                            </tr>
-                        </thead>
                         <tbody id="charterTableBody">
                             <% charterData.forEach(charter => { %>
                                 <tr data-project-id="<%= charter.project_id %>">
+                                    <td>Start Date</td>
                                     <td><%= charter.start_date %></td>
+                                </tr>
+                                <tr data-project-id="<%= charter.project_id %>">
+                                    <td>End Date</td>
                                     <td><%= charter.end_date %></td>
+                                </tr>
+                                <tr data-project-id="<%= charter.project_id %>">
+                                    <td>Description</td>
                                     <td><%= charter.description %></td>
+                                </tr>
+                                <tr data-project-id="<%= charter.project_id %>">
+                                    <td>KPIs</td>
                                     <td><%= charter.kpis %></td>
+                                </tr>
+                                <tr data-project-id="<%= charter.project_id %>">
+                                    <td>Risks</td>
                                     <td><%= charter.risks %></td>
+                                </tr>
+                                <tr data-project-id="<%= charter.project_id %>">
+                                    <td>Mitigation Strategies</td>
                                     <td><%= charter.mitigation_strategies %></td>
+                                </tr>
+                                <tr data-project-id="<%= charter.project_id %>">
+                                    <td>Target Participants</td>
                                     <td><%= charter.target_participants %></td>
+                                </tr>
+                                <tr data-project-id="<%= charter.project_id %>">
+                                    <td>Submitter Name</td>
                                     <td><%= charter.submitter_name %></td>
                                 </tr>
                             <% }); %>

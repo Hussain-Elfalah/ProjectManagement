@@ -206,31 +206,41 @@
                 </div>
 
                 <div id="charterTable">
-                    <h3>Saved Charter Data</h3>
+                    <h3>Saved Activity Form Data</h3>
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Description</th>
-                                <th>KPIs</th>
-                                <th>Risks</th>
-                                <th>Mitigation Strategies</th>
-                                <th>Target Participants</th>
-                                <th>Submitter Name</th>
-                            </tr>
-                        </thead>
                         <tbody id="charterTableBody">
-                            <% formData.forEach(form => { %>
-                                <tr data-project-id="<%= form.project_id %>">
-                                    <td><%= form.start_date %></td>
-                                    <td><%= form.end_date %></td>
-                                    <td><%= form.description %></td>
-                                    <td><%= form.kpis %></td>
-                                    <td><%= form.risks %></td>
-                                    <td><%= form.mitigation_strategies %></td>
-                                    <td><%= form.target_participants %></td>
-                                    <td><%= form.submitter_name %></td>
+                            <% formData.forEach(from => { %>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>Start Date</td>
+                                    <td><%= from.start_date %></td>
+                                </tr>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>End Date</td>
+                                    <td><%= from.end_date %></td>
+                                </tr>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>Description</td>
+                                    <td><%= from.description %></td>
+                                </tr>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>KPIs</td>
+                                    <td><%= from.kpis %></td>
+                                </tr>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>Risks</td>
+                                    <td><%= from.risks %></td>
+                                </tr>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>Mitigation Strategies</td>
+                                    <td><%= from.mitigation_strategies %></td>
+                                </tr>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>Target Participants</td>
+                                    <td><%= from.target_participants %></td>
+                                </tr>
+                                <tr data-project-id="<%= from.project_id %>">
+                                    <td>Submitter Name</td>
+                                    <td><%= from.submitter_name %></td>
                                 </tr>
                             <% }); %>
                         </tbody>

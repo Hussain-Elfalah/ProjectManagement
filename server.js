@@ -1,5 +1,5 @@
 // Importing required modules
-import express from 'express';
+import express, { response } from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import passport from 'passport';
@@ -180,10 +180,49 @@ const renderProjectManagementPage = async (req, res) => {
 const renderDashboard = async (req, res) => {
   try {
     const summaryResponse = await axios.get(`${API_URL}/project_summary/view`);
-    res.render('dashboard.ejs', { data: summaryResponse.data });
+    const Response = await axios.get(`${API_URL}/activity_closures`);
+    res.render('dashboard.ejs', { 
+      data: summaryResponse.data, 
+      participants: Response.data,
+      username: req.user.username,  
+      userId: req.user.id
+     });
   } catch (error) {
     console.error('Error rendering dashboard:', error);
     res.status(500).redirect('/pendingprojects');
+  }
+};
+
+const renderuserDashboard = async (req, res) => {
+  try {
+    const summaryResponse = await axios.get(`${API_URL}/user/dashboard`);
+    const Response = await axios.get(`${API_URL}/activity_closures`);
+    console.log("the username of logged person is:", req.user.username);
+    res.render('Udashboard.ejs', { 
+      username: req.user.username,  
+      userId: req.user.id, 
+      data: summaryResponse.data, 
+      participants: Response.data
+    });
+  } catch (error) {
+    console.error('Error rendering dashboard:', error);
+    res.status(500).redirect('/pendingprojects');
+  }
+};
+
+const renderReportsPage = async (req, res) => {
+  try {
+    const Response = await axios.get(`${API_URL}/reports`);
+    const projectResponse = await axios.get(`${API_URL}/project/members`);
+    res.render('reports.ejs', { 
+      data: Response.data,
+      projects: projectResponse.data,
+      username: req.user.username,  
+      userId: req.user.id
+     });
+  } catch (error) {
+    console.error('Error rendering dashboard:', error);
+    res.status(500).redirect('/index');
   }
 };
 
@@ -436,7 +475,8 @@ const addProjectClosure = async (req, res) => {
       risks,
       mitigation_strategies,
       total_male_participants,
-      total_female_participants
+      total_female_participants,
+      submitter_name
     } = req.body;
 
     const projectClosure = {
@@ -449,7 +489,8 @@ const addProjectClosure = async (req, res) => {
       risks,
       mitigation_strategies,
       total_male_participants,
-      total_female_participants
+      total_female_participants,
+      submitter_name
     };
 
     console.log('Sending project clsoure:', projectClosure);
@@ -513,6 +554,21 @@ const assignProject = async (req, res) => {
   } catch (error) {
     console.error('Error creating project:', error);
     res.status(500).redirect('/users');
+  }
+};
+
+const addReport = async (req, res) => {
+  try {
+    const { submitter_name, description, project_id } = req.body;
+    await axios.post(`${API_URL}/report/add`, {
+      submitter_name,
+      description,
+      project_id
+    });
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.error('Error creating report:', error);
+    res.status(500).redirect('/dashboard');
   }
 };
 
@@ -711,7 +767,7 @@ const editActivityClosure = async (req, res) => {
 
     await axios.patch(`${API_URL}/activity_closures/${project_id}/edit`, Closure);
     
-    res.redirect('/activityclosure');
+    res.redirect('/activity_closure');
   } catch (error) {
     console.error('Error updating project:', error);
     res.status(500).redirect('/activities');
@@ -784,6 +840,8 @@ app.get('/closure', isAuthenticated, renderProjectClosurePage);
 app.get('/activities', isAuthenticated, renderActivitiesPage);
 app.get('/activity_form', isAuthenticated, renderActivityFormPage);
 app.get('/activity_closure', isAuthenticated, renderActivityClosurePage);
+app.get('/userDashboard', isAuthenticated, renderuserDashboard);
+app.get('/reports', isAuthenticated, renderReportsPage);
 
 app.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -841,6 +899,7 @@ app.post('/activity_forms/add', addActivityForm);
 app.post('/activity_form/edit', editActivityForm);
 app.post('/activity_closure/add', addActivityClosure);
 app.post('/activity_closure/edit', editActivityClosure);
+app.post('/reports/add', addReport);
 
 // Start the server
 app.listen(port, () => {
